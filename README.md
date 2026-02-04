@@ -1,4 +1,4 @@
-# Bachelor Thesis: Connection Migration and Multipath in QUIC
+# Bachelor Thesis: Connection Migration and Multipath Communication in QUIC
 
 This repository contains the source material for my bachelor thesis on
 connection migration and multipath support in the QUIC transport protocol.

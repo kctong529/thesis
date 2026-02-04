@@ -1,0 +1,7 @@
+title: Design Trade-offs and Practical Considerations
+# List section files in order (without .md extension)
+
+complexity-implementation-cost
+performance-pitfalls
+middleboxes-deployment-constraints
+privacy-considerations
