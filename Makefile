@@ -9,6 +9,9 @@ METADATA = metadata.yaml
 MAIN_TEX = main.tex
 FINAL_PDF = $(BUILD_DIR)/thesis.pdf
 PANDOC_ARGS = --from=markdown --to=latex --top-level-division=section
+CHAPTER_ORDER := intro migration multipath tradeoffs evaluation conclusion
+CHAPTER_CONFIGS := $(addsuffix /config.yaml,$(addprefix $(CHAPTERS_DIR)/,$(CHAPTER_ORDER)))
+CHAPTER_MDS := $(shell find $(CHAPTERS_DIR) -type f -name "*.md" 2>/dev/null | sort)
 
 # Color output
 BOLD = \033[1m
@@ -55,26 +58,22 @@ help:
 # PRIMARY BUILD TARGET
 ################################################################################
 
-pdf: chapters $(FINAL_PDF)
+pdf: $(FINAL_PDF)
 	@echo ""
 	@echo "$(GREEN)✓ Build complete$(RESET)"
 	@echo "  Output: $(FINAL_PDF)"
 
-$(FINAL_PDF): $(METADATA) $(MAIN_TEX) | $(BUILD_DIR)
+$(FINAL_PDF): $(METADATA) $(MAIN_TEX) extract_metadata.py $(CHAPTER_CONFIGS) $(CHAPTER_MDS) | $(BUILD_DIR)
 	@echo "$(BOLD)=== PHASE 1: Prepare Thesis Content ===$(RESET)"
 	@echo ""
-	
-	@echo "  [1/4] Extracting metadata..."
-	@python3 extract_metadata.py $(METADATA) $(BUILD_DIR)/metadata_config.tex $(BUILD_DIR)/main.xmpdata
-	@echo "        $(GREEN)✓$(RESET) Metadata extracted"
-	
-	@echo "  [2/4] Converting abstract..."
-	@sed -n '/^abstract: |/,/^[a-z]/p' $(METADATA) | sed '1d;$$d' | pandoc $(PANDOC_ARGS) -o $(BUILD_DIR)/abstract.tex
-	@echo "        $(GREEN)✓$(RESET) Abstract converted"
-	
-	@echo "  [3/4] Assembling chapters..."
+
+	@echo "  [1/3] Extracting metadata + abstract..."
+	@python3 extract_metadata.py $(METADATA) $(BUILD_DIR)/metadata_config.tex $(BUILD_DIR)/main.xmpdata $(BUILD_DIR)/abstract.tex
+	@echo "        $(GREEN)✓$(RESET) Metadata + abstract generated"
+
+	@echo "  [2/3] Assembling chapters..."
 	@rm -f $(BUILD_DIR)/full_body.md
-	@for chap in intro migration multipath tradeoffs evaluation conclusion; do \
+	@for chap in $(CHAPTER_ORDER); do \
 		if [ -d "$(CHAPTERS_DIR)/$$chap" ]; then \
 			printf "        • $$chap ... "; \
 			section_count=0; \
@@ -99,23 +98,23 @@ $(FINAL_PDF): $(METADATA) $(MAIN_TEX) | $(BUILD_DIR)
 		fi \
 	done
 	@echo "        $(GREEN)✓$(RESET) Chapters assembled"
-	
-	@echo "  [4/4] Converting to LaTeX..."
+
+	@echo "  [3/3] Converting to LaTeX..."
 	@pandoc $(PANDOC_ARGS) $(BUILD_DIR)/full_body.md -o $(BUILD_DIR)/body.tex
 	@echo "        $(GREEN)✓$(RESET) LaTeX conversion complete"
-	
+
 	@echo ""
 	@echo "$(BOLD)=== PHASE 2: Compile to PDF ===$(RESET)"
 	@echo ""
-	
+
 	@echo "  [1/2] First pass (build structure)..."
-	@-pdflatex -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX) > /dev/null 2>&1
+	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX)
 	@echo "        $(GREEN)✓$(RESET) Structure built"
-	
+
 	@echo "  [2/2] Second pass (table of contents)..."
-	@-pdflatex -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX) > /dev/null 2>&1
+	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX)
 	@echo "        $(GREEN)✓$(RESET) TOC generated"
-	
+
 	@echo ""
 	@if [ -f $(BUILD_DIR)/main.pdf ]; then \
 		mv $(BUILD_DIR)/main.pdf $(FINAL_PDF); \
