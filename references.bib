@@ -1,0 +1,122 @@
+@inproceedings{10.1007/978-3-642-20757-0_35,
+  title = {{{MultiPath TCP}}: {{From}} Theory to Practice},
+  booktitle = {Networking 2011},
+  author = {Barr{\'e}, S{\'e}bastien and Paasch, Christoph and Bonaventure, Olivier},
+  editor = {{Domingo-Pascual}, Jordi and Manzoni, Pietro and Palazzo, Sergio and Pont, Ana and Scoglio, Caterina},
+  year = 2011,
+  pages = {444--457},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  abstract = {The IETF is developing a new transport layer solution, MultiPath TCP (MPTCP), which allows to efficiently exploit several Internet paths between a pair of hosts, while presenting a single TCP connection to the application layer. From an implementation viewpoint, multiplexing flows at the transport layer raises several challenges. We first explain how this major TCP extension affects the Linux TCP/IP stack when considering the establishment of TCP connections and the transmission and reception of data over multiple paths. Then, based on our implementation of MultiPath TCP in the Linux kernel, we explain how such an implementation can be optimized to achieve high performance and report measurements showing the performance of receive buffer tuning and coupled congestion control.},
+  isbn = {978-3-642-20757-0}
+}
+
+@article{10.1145/1282427.1282421,
+  title = {Structured Streams: A New Transport Abstraction},
+  author = {Ford, Bryan},
+  year = 2007,
+  month = aug,
+  journal = {SIGCOMM Comput. Commun. Rev.},
+  volume = {37},
+  number = {4},
+  pages = {361--372},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {0146-4833},
+  doi = {10.1145/1282427.1282421},
+  abstract = {Internet applications currently have a choice between stream and datagram transport abstractions. Datagrams efficiently support small transactions and streams are suited for long-running conversations, but neither abstraction adequately supports applications like HTTP that exhibit a mixture of transaction sizes, or applications like FTP and SIP that use multiple transport instances. Structured Stream Transport (SST) enhances the traditional stream abstraction with a hierarchical hereditary structure, allowing applications to create lightweight child streams from any existing stream. Unlike TCP streams, these lightweight streams incur neither 3-way handshaking delays on startup nor TIME-WAIT periods on close. Each stream offers independent data transfer and flow control, allowing different transactions to proceed in parallel without head-of-line blocking, but all streams share one congestion control context. SST supports both reliable and best-effort delivery in a way that semantically unifies datagrams with streams and solves the classic "large datagram" problem, where a datagram's loss probability increases exponentially with fragment count. Finally, an application can prioritize its streams relative to each other and adjust priorities dynamically through out-of-band signaling. A user-space prototype shows that SST is TCP-friendly to within 2\%, and performs comparably to a user-space TCP and to within 10\% of kernel TCP on a WiFi network.},
+  issue_date = {October 2007},
+  keywords = {best-effort,datagram,fairness,mobility,multimedia,reliable,SST,stream,TCP,transport protocols,web transport}
+}
+
+@inproceedings{10.1145/3098822.3098842,
+  title = {The {{QUIC}} Transport Protocol: {{Design}} and Internet-Scale Deployment},
+  booktitle = {Proceedings of the Conference of the {{ACM}} Special Interest Group on Data Communication},
+  author = {Langley, Adam and Riddoch, Alistair and Wilk, Alyssa and Vicente, Antonio and Krasic, Charles and Zhang, Dan and Yang, Fan and Kouranov, Fedor and Swett, Ian and Iyengar, Janardhan and Bailey, Jeff and Dorfman, Jeremy and Roskind, Jim and Kulik, Joanna and Westin, Patrik and Tenneti, Raman and Shade, Robbie and Hamilton, Ryan and Vasiliev, Victor and Chang, Wan-Teh and Shi, Zhongyi},
+  year = 2017,
+  series = {Sigcomm '17},
+  pages = {183--196},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3098822.3098842},
+  abstract = {We present our experience with QUIC, an encrypted, multiplexed, and low-latency transport protocol designed from the ground up to improve transport performance for HTTPS traffic and to enable rapid deployment and continued evolution of transport mechanisms. QUIC has been globally deployed at Google on thousands of servers and is used to serve traffic to a range of clients including a widely-used web browser (Chrome) and a popular mobile video streaming app (YouTube). We estimate that 7\% of Internet traffic is now QUIC. We describe our motivations for developing a new transport, the principles that guided our design, the Internet-scale process that we used to perform iterative experiments on QUIC, performance improvements seen by our various services, and our experience deploying QUIC globally. We also share lessons about transport design and the Internet ecosystem that we learned from our deployment.},
+  isbn = {978-1-4503-4653-5}
+}
+
+@article{10268842,
+  title = {{{mQUIC}}: {{Use}} of {{QUIC}} for Handover Support with Connection Migration in Wireless/Mobile Networks},
+  author = {Kim, So-Yong and Koh, Seok-Joo},
+  date = {2024},
+  journaltitle = {IEEE Communications Magazine},
+  volume = {62},
+  number = {4},
+  pages = {128--134},
+  doi = {10.1109/MCOM.023.2300083},
+  keywords = {5G mobile communication,Delays,Handover,IP networks,Low latency communication,Performance gain,Routing,Servers,Table lookup,Wireless fidelity,Wireless networks}
+}
+
+@inproceedings{179787,
+  title = {How Speedy Is {{SPDY}}?},
+  booktitle = {11th {{USENIX}} Symposium on Networked Systems Design and Implementation ({{NSDI}} 14)},
+  author = {Wang, Xiao Sophia and Balasubramanian, Aruna and Krishnamurthy, Arvind and Wetherall, David},
+  year = 2014,
+  month = apr,
+  pages = {387--399},
+  publisher = {USENIX Association},
+  address = {Seattle, WA},
+  isbn = {978-1-931971-09-6}
+}
+
+@article{592101,
+  title = {Mobile {{IP}}},
+  author = {Perkins, C.E.},
+  year = 1997,
+  journal = {IEEE Communications Magazine},
+  volume = {35},
+  number = {5},
+  pages = {84--99},
+  doi = {10.1109/35.592101},
+  keywords = {Computer networks,Design engineering,Home automation,Home computing,Internet,Maintenance engineering,Mobile communication,Mobile computing,Protocols,Tunneling}
+}
+
+@misc{rfc4960,
+  title = {Stream Control Transmission Protocol},
+  author = {Stewart, Randall R.},
+  year = 2007,
+  month = sep,
+  series = {Request for Comments},
+  number = {4960},
+  publisher = {RFC Editor},
+  doi = {10.17487/RFC4960},
+  abstract = {This document obsoletes RFC 2960 and RFC 3309. It describes the Stream Control Transmission Protocol (SCTP). SCTP is designed to transport Public Switched Telephone Network (PSTN) signaling messages over IP networks, but is capable of broader applications. SCTP is a reliable transport protocol operating on top of a connectionless packet network such as IP. It offers the following services to its users: -- acknowledged error-free non-duplicated transfer of user data, -- data fragmentation to conform to discovered path MTU size, -- sequenced delivery of user messages within multiple streams, with an option for order-of-arrival delivery of individual user messages, -- optional bundling of multiple user messages into a single SCTP packet, and -- network-level fault tolerance through supporting of multi-homing at either or both ends of an association. The design of SCTP includes appropriate congestion avoidance behavior and resistance to flooding and masquerade attacks. [STANDARDS-TRACK]},
+  howpublished = {RFC 4960},
+  pagetotal = {152}
+}
+
+@misc{rfc9000,
+  title = {{{QUIC}}: A {{UDP-based}} Multiplexed and Secure Transport},
+  author = {Iyengar, Jana and Thomson, Martin},
+  date = {2021-05},
+  series = {Request for Comments},
+  number = {9000},
+  doi = {10.17487/RFC9000},
+  url = {https://www.rfc-editor.org/info/rfc9000},
+  abstract = {This document defines the core of the QUIC transport protocol. QUIC provides applications with flow-controlled streams for structured communication, low-latency connection establishment, and network path migration. QUIC includes security measures that ensure confidentiality, integrity, and availability in a range of deployment circumstances. Accompanying documents describe the integration of TLS for key negotiation, loss detection, and an exemplary congestion control algorithm.},
+  howpublished = {RFC 9000},
+  organization = {RFC Editor},
+  pagetotal = {151}
+}
+
+@misc{rfc9002,
+  title = {{{QUIC}} Loss Detection and Congestion Control},
+  author = {Iyengar, Jana and Swett, Ian},
+  date = {2021-05},
+  series = {Request for Comments},
+  number = {9002},
+  doi = {10.17487/RFC9002},
+  url = {https://www.rfc-editor.org/info/rfc9002},
+  abstract = {This document describes loss detection and congestion control mechanisms for QUIC.},
+  howpublished = {RFC 9002},
+  organization = {RFC Editor},
+  pagetotal = {42}
+}
