@@ -1,6 +1,6 @@
 ################################################################################
 # Thesis Build System
-# 2-phase hybrid build: Markdown → LaTeX → PDF via Pandoc + pdflatex
+# 2-phase hybrid build: Markdown → LaTeX → PDF via Pandoc + pdflatex (+ biber)
 ################################################################################
 
 BUILD_DIR = build
@@ -8,7 +8,9 @@ CHAPTERS_DIR = chapters
 METADATA = metadata.yaml
 MAIN_TEX = main.tex
 FINAL_PDF = $(BUILD_DIR)/thesis.pdf
+
 PANDOC_ARGS = --from=markdown --to=latex --top-level-division=section
+
 CHAPTER_ORDER := intro migration multipath tradeoffs evaluation conclusion
 CHAPTER_CONFIGS := $(addsuffix /config.yaml,$(addprefix $(CHAPTERS_DIR)/,$(CHAPTER_ORDER)))
 CHAPTER_MDS := $(shell find $(CHAPTERS_DIR) -type f -name "*.md" 2>/dev/null | sort)
@@ -68,7 +70,10 @@ $(FINAL_PDF): $(METADATA) $(MAIN_TEX) extract_metadata.py $(CHAPTER_CONFIGS) $(C
 	@echo ""
 
 	@echo "  [1/3] Extracting metadata + abstract..."
-	@python3 extract_metadata.py $(METADATA) $(BUILD_DIR)/metadata_config.tex $(BUILD_DIR)/main.xmpdata $(BUILD_DIR)/abstract.tex
+	@python3 extract_metadata.py $(METADATA) \
+		$(BUILD_DIR)/metadata_config.tex \
+		$(BUILD_DIR)/main.xmpdata \
+		$(BUILD_DIR)/abstract.tex
 	@echo "        $(GREEN)✓$(RESET) Metadata + abstract generated"
 
 	@echo "  [2/3] Assembling chapters..."
@@ -77,49 +82,52 @@ $(FINAL_PDF): $(METADATA) $(MAIN_TEX) extract_metadata.py $(CHAPTER_CONFIGS) $(C
 		if [ -d "$(CHAPTERS_DIR)/$$chap" ]; then \
 			printf "        • $$chap ... "; \
 			section_count=0; \
-			chapter_title=$$(grep "^title:" $(CHAPTERS_DIR)/$$chap/config.yaml 2>/dev/null | sed 's/^title: //'); \
-			echo "# $$chapter_title" >> $(BUILD_DIR)/full_body.md; \
-			echo "" >> $(BUILD_DIR)/full_body.md; \
+			chapter_title=$$(grep "^title:" "$(CHAPTERS_DIR)/$$chap/config.yaml" 2>/dev/null | sed 's/^title: //'); \
+			echo "# $$chapter_title" >> "$(BUILD_DIR)/full_body.md"; \
+			echo "" >> "$(BUILD_DIR)/full_body.md"; \
 			while read -r line; do \
-				if [ ! "$$(echo $$line | grep '^title:')" ] && [ ! "$$(echo $$line | grep '^#')" ]; then \
-					section=$$(echo "$$line" | xargs); \
-					if [ ! -z "$$section" ]; then \
-						if [ -f "$(CHAPTERS_DIR)/$$chap/$$section.md" ]; then \
-							cat "$(CHAPTERS_DIR)/$$chap/$$section.md" >> $(BUILD_DIR)/full_body.md; \
-							printf "\n\n" >> $(BUILD_DIR)/full_body.md; \
-							section_count=$$((section_count + 1)); \
-						else \
-							echo "$(YELLOW)⚠$(RESET) missing: $$section.md"; \
-						fi \
-					fi \
-				fi \
+				echo "$$line" | grep -qE '^(title:|#)' && continue; \
+				section=$$(echo "$$line" | xargs); \
+				[ -z "$$section" ] && continue; \
+				if [ -f "$(CHAPTERS_DIR)/$$chap/$$section.md" ]; then \
+					cat "$(CHAPTERS_DIR)/$$chap/$$section.md" >> "$(BUILD_DIR)/full_body.md"; \
+					printf "\n\n" >> "$(BUILD_DIR)/full_body.md"; \
+					section_count=$$((section_count + 1)); \
+				else \
+					echo "$(YELLOW)⚠$(RESET) missing: $$section.md"; \
+				fi; \
 			done < "$(CHAPTERS_DIR)/$$chap/config.yaml"; \
 			echo "$$section_count sections"; \
-		fi \
+		fi; \
 	done
 	@echo "        $(GREEN)✓$(RESET) Chapters assembled"
 
-	@echo "  [3/3] Converting to LaTeX..."
-	@pandoc $(PANDOC_ARGS) $(BUILD_DIR)/full_body.md -o $(BUILD_DIR)/body.tex
+	@echo "  [3/3] Converting to LaTeX (Pandoc + biblatex)..."
+	@pandoc $(PANDOC_ARGS) --metadata-file=$(METADATA) --biblatex \
+		"$(BUILD_DIR)/full_body.md" -o "$(BUILD_DIR)/body.tex"
 	@echo "        $(GREEN)✓$(RESET) LaTeX conversion complete"
 
 	@echo ""
 	@echo "$(BOLD)=== PHASE 2: Compile to PDF ===$(RESET)"
 	@echo ""
 
-	@echo "  [1/2] First pass (build structure)..."
-	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX)
-	@echo "        $(GREEN)✓$(RESET) Structure built"
+	@echo "  [1/4] pdflatex (init)..."
+	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory="$(BUILD_DIR)" "$(MAIN_TEX)"
 
-	@echo "  [2/2] Second pass (table of contents)..."
-	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(MAIN_TEX)
-	@echo "        $(GREEN)✓$(RESET) TOC generated"
+	@echo "  [2/4] biber (references)..."
+	@biber "$(BUILD_DIR)/main"
+
+	@echo "  [3/4] pdflatex (resolve refs)..."
+	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory="$(BUILD_DIR)" "$(MAIN_TEX)"
+
+	@echo "  [4/4] pdflatex (stabilize ToC)..."
+	@pdflatex -halt-on-error -interaction=nonstopmode -output-directory="$(BUILD_DIR)" "$(MAIN_TEX)"
 
 	@echo ""
-	@if [ -f $(BUILD_DIR)/main.pdf ]; then \
-		mv $(BUILD_DIR)/main.pdf $(FINAL_PDF); \
+	@if [ -f "$(BUILD_DIR)/main.pdf" ]; then \
+		mv "$(BUILD_DIR)/main.pdf" "$(FINAL_PDF)"; \
 		echo "$(GREEN)✓ PDF generated: $(FINAL_PDF)$(RESET)"; \
-		ls -lh $(FINAL_PDF); \
+		ls -lh "$(FINAL_PDF)"; \
 	else \
 		echo "$(YELLOW)✗ PDF generation failed - check 'make log'$(RESET)"; \
 		exit 1; \
@@ -130,7 +138,7 @@ $(FINAL_PDF): $(METADATA) $(MAIN_TEX) extract_metadata.py $(CHAPTER_CONFIGS) $(C
 ################################################################################
 
 $(BUILD_DIR):
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p "$(BUILD_DIR)"
 
 ################################################################################
 # UTILITY TARGETS
@@ -165,10 +173,10 @@ verify:
 log:
 	@echo "$(BOLD)LaTeX Build Log (last 100 lines)$(RESET)"
 	@echo ""
-	@if [ -f $(BUILD_DIR)/main.log ]; then \
-		tail -100 $(BUILD_DIR)/main.log; \
+	@if [ -f "$(BUILD_DIR)/main.log" ]; then \
+		tail -100 "$(BUILD_DIR)/main.log"; \
 	else \
-		echo "$(YELLOW)⚠$(RESET) No build log found. Run 'make build' first."; \
+		echo "$(YELLOW)⚠$(RESET) No build log found. Run 'make pdf' first."; \
 	fi
 
 open:
@@ -176,14 +184,14 @@ open:
 		echo "Opening $(FINAL_PDF)..."; \
 		open "$(FINAL_PDF)" 2>/dev/null || xdg-open "$(FINAL_PDF)" 2>/dev/null || echo "Could not open PDF"; \
 	else \
-		echo "$(YELLOW)✗$(RESET) PDF not found. Run 'make build' first."; \
+		echo "$(YELLOW)✗$(RESET) PDF not found. Run 'make pdf' first."; \
 	fi
 
 status:
 	@echo "$(BOLD)Thesis Build Status$(RESET)"
 	@echo ""
 	@if [ -f "$(FINAL_PDF)" ]; then \
-		echo "$(GREEN)✓$(RESET) PDF built: $$(ls -lh $(FINAL_PDF) | awk '{print $$5, "- " $$6, $$7, $$8}')"; \
+		echo "$(GREEN)✓$(RESET) PDF built: $$(ls -lh "$(FINAL_PDF)" | awk '{print $$5, "- " $$6, $$7, $$8}')"; \
 	else \
 		echo "$(YELLOW)✗$(RESET) PDF not built"; \
 	fi
@@ -197,14 +205,16 @@ install-deps:
 	@echo "Required packages:"
 	@echo "  • pandoc (markdown to LaTeX conversion)"
 	@echo "  • texlive-latex-base (pdflatex)"
-	@echo "  • texlive-fonts-recommended (fonts)"
+	@echo "  • biber + biblatex (for references)"
 	@echo "  • python3-yaml (YAML parsing)"
 	@echo ""
 	@echo "Ubuntu/Debian:"
-	@echo "  sudo apt-get install pandoc texlive-latex-base texlive-latex-extra texlive-fonts-recommended python3-yaml"
+	@echo "  sudo apt-get install pandoc texlive-latex-base texlive-latex-extra texlive-fonts-recommended biber python3-yaml"
 	@echo ""
 	@echo "macOS:"
 	@echo "  brew install pandoc basictex"
+	@echo "  # Ensure biber is installed (BasicTeX may not include it)."
+	@echo "  # With TeX Live: tlmgr install biber biblatex"
 	@echo "  pip3 install pyyaml"
 
 ################################################################################
@@ -213,16 +223,16 @@ install-deps:
 
 clean:
 	@echo "Cleaning build artifacts..."
-	@rm -rf $(BUILD_DIR)
+	@rm -rf "$(BUILD_DIR)"
 	@echo "$(GREEN)✓$(RESET) Build directory removed"
 
 clean-all: clean
 	@echo "$(YELLOW)⚠$(RESET) Removing all generated files including chapters..."
-	@rm -rf $(CHAPTERS_DIR)
+	@rm -rf "$(CHAPTERS_DIR)"
 	@echo "$(GREEN)✓$(RESET) Clean complete"
 
 ################################################################################
-# PHONY TARGETS (don't create files with these names)
+# PHONY TARGETS
 ################################################################################
 
 .PHONY: help pdf clean clean-all chapters verify log open status install-deps

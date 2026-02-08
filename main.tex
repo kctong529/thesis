@@ -10,6 +10,9 @@
 
 \documentclass[english,12pt,a4paper,elec,utf8,a-2b,online]{aaltothesis}
 
+\usepackage[backend=biber,style=ieee]{biblatex}
+\addbibresource{references.bib}
+
 \usepackage{graphicx}
 
 \setupthesisfonts
@@ -61,10 +64,10 @@
 \input{build/body.tex}
 
 %% =========================================================================
-%% BIBLIOGRAPHY (uncomment when references.bib is ready)
+%% BIBLIOGRAPHY
 %% =========================================================================
 
-% \bibliographystyle{apalike}
-% \bibliography{references}
+\clearpage
+\printbibliography[title={References}, heading=bibintoc]
 
 \end{document}
