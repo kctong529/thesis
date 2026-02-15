@@ -43,6 +43,23 @@
   isbn = {978-1-4503-4653-5}
 }
 
+@article{10.1145/52325.52336,
+  title = {The Design Philosophy of the {{DARPA}} Internet Protocols},
+  author = {Clark, D.},
+  year = 1988,
+  month = aug,
+  journal = {SIGCOMM Comput. Commun. Rev.},
+  volume = {18},
+  number = {4},
+  pages = {106--114},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {0146-4833},
+  doi = {10.1145/52325.52336},
+  abstract = {The Internet protocol suite, TCP/IP, was first proposed fifteen years ago. It was developed by the Defense Advanced Research Projects Agency (DARPA), and has been used widely in military and commercial systems. While there have been papers and specifications that describe how the protocols work, it is sometimes difficult to deduce from these why the protocol is as it is. For example, the Internet protocol is based on a connectionless or datagram mode of service. The motivation for this has been greatly misunderstood. This paper attempts to capture some of the early reasoning which shaped the Internet protocols.},
+  issue_date = {August 1988}
+}
+
 @article{10268842,
   title = {{{mQUIC}}: {{Use}} of {{QUIC}} for Handover Support with Connection Migration in Wireless/Mobile Networks},
   author = {Kim, So-Yong and Koh, Seok-Joo},
@@ -77,6 +94,31 @@
   pages = {84--99},
   doi = {10.1109/35.592101},
   keywords = {Computer networks,Design engineering,Home automation,Home computing,Internet,Maintenance engineering,Mobile communication,Mobile computing,Protocols,Tunneling}
+}
+
+@article{nikander2010host,
+  title = {Host Identity Protocol ({{HIP}}): {{Connectivity}}, Mobility, Multi-Homing, Security, and Privacy over {{IPv4}} and {{IPv6}} Networks},
+  author = {Nikander, Pekka and Gurtov, Andrei and Henderson, Thomas R},
+  year = 2010,
+  journal = {IEEE Communications Surveys \& Tutorials},
+  volume = {12},
+  number = {2},
+  pages = {186--204},
+  publisher = {IEEE}
+}
+
+@misc{rfc3775,
+  title = {Mobility Support in Ipv6},
+  author = {Perkins, Charles E. and Arkko, Jari and Johnson, David B.},
+  year = 2004,
+  month = jun,
+  series = {Request for Comments},
+  number = {3775},
+  publisher = {RFC Editor},
+  doi = {10.17487/RFC3775},
+  abstract = {This document specifies a protocol which allows nodes to remain reachable while moving around in the IPv6 Internet. Each mobile node is always identified by its home address, regardless of its current point of attachment to the Internet. While situated away from its home, a mobile node is also associated with a care-of address, which provides information about the mobile node's current location. IPv6 packets addressed to a mobile node's home address are transparently routed to its care-of address. The protocol enables IPv6 nodes to cache the binding of a mobile node's home address with its care-of address, and to then send any packets destined for the mobile node directly to it at this care-of address. To support this operation, Mobile IPv6 defines a new IPv6 protocol and a new destination option. All IPv6 nodes, whether mobile or stationary, can communicate with mobile nodes. [STANDARDS-TRACK]},
+  howpublished = {RFC 3775},
+  pagetotal = {165}
 }
 
 @misc{rfc4960,
@@ -119,4 +161,15 @@
   howpublished = {RFC 9002},
   organization = {RFC Editor},
   pagetotal = {42}
+}
+
+@article{saltzer1984end,
+  title = {End-to-End Arguments in System Design},
+  author = {Saltzer, Jerome H and Reed, David P and Clark, David D},
+  year = 1984,
+  journal = {ACM Transactions on Computer Systems (TOCS)},
+  volume = {2},
+  number = {4},
+  pages = {277--288},
+  publisher = {Acm New York, NY, USA}
 }
