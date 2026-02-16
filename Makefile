@@ -11,7 +11,7 @@ FINAL_PDF = $(BUILD_DIR)/thesis.pdf
 
 PANDOC_ARGS = --from=markdown --to=latex --top-level-division=section
 
-CHAPTER_ORDER := intro migration multipath tradeoffs evaluation conclusion
+CHAPTER_ORDER := intro mobility
 CHAPTER_CONFIGS := $(addsuffix /config.yaml,$(addprefix $(CHAPTERS_DIR)/,$(CHAPTER_ORDER)))
 CHAPTER_MDS := $(shell find $(CHAPTERS_DIR) -type f -name "*.md" 2>/dev/null | sort)
 

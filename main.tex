@@ -19,6 +19,17 @@
 
 \usepackage{etoolbox}
 
+% Pandoc sometimes emits \tightlist; define it so LaTeX won't crash
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Fix fancyhdr headheight warning (aaltothesis uses fancyhdr internally)
+\setlength{\headheight}{36pt}
+\addtolength{\topmargin}{-24pt}
+
+\setupthesisfonts
+
+
 % Start each top-level section on a new page
 \preto{\section}{\clearpage}
 
@@ -41,9 +52,6 @@
 
 %% Cover page
 \makecoverpage
-
-%% Copyright page
-\makecopyrightpage
 
 \clearpage
 
