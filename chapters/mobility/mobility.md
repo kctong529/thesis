@@ -96,6 +96,6 @@ Across these efforts, a pattern emerges:
 - SCTP and MPTCP extend transport semantics to tolerate multiple addresses.
 - SPDY and SST refine multiplexing above TCP but retain underlying bindings.
 
-Each approach relaxes or compensates for the tight coupling between session identity and network location in a different way. Yet none achieved universal deployment across the open Internet. The persistence of the classical 5-tuple model reflects not only technical inertia but also the constraints imposed by middleboxes, incremental deployability, and compatibility requirements.
+Each approach relaxes or compensates for the tight coupling between session identity and network location in a different way. Yet none achieved universal deployment across the open Internet. The persistence of the classical four-tuple model reflects not only technical inertia but also the constraints imposed by middleboxes, incremental deployability, and compatibility requirements.
 
 It is in this context that QUIC emerges: not as the first attempt to decouple identity from location, but as a transport protocol designed from the outset to make that separation explicit while remaining deployable over UDP in today’s Internet.
