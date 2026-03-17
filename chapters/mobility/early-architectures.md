@@ -1,6 +1,6 @@
-## Early Architectural Responses
+## Proposed Solutions
 
-The tension between identity and location has been recognized for decades. In response, researchers proposed solutions at different layers of the stack. Some introduced indirection at the network layer; others redefined identity through new namespaces or extended transport and application semantics. Although these approaches differ in mechanism, they can be understood as successive attempts to relax or circumvent the binding between session identity and network location.
+The limitations exposed by mobility and multihoming have been recognized for decades. In response, researchers have proposed solutions at different layers of the stack. Some introduced indirection at the network layer. Others redefined identity through new namespaces or extended transport and application semantics. Although these approaches differ in mechanism, they can be understood as successive attempts to relax or circumvent the binding between session identity and network location.
 
 ### Network-Layer Indirection: Mobile IP
 
@@ -16,13 +16,11 @@ Rather than preserving the IP address as the sole identifier through indirection
 
 The Host Identity Protocol (HIP) proposes a more structural revision. Instead of treating IP addresses as both locators and identifiers, HIP introduces a new cryptographic namespace between the network and transport layers. In HIP's formulation, IP addresses serve solely as routing locators, while host identity is bound to a cryptographic Host Identity (HI) [@nikander2010host].
 
-As articulated in the HIP literature, “in the current IP architecture, the IP addresses assume the dual role of acting both as host identifiers and locators.” HIP seeks to break this duality by giving each host a persistent cryptographic identity independent of network location.
-
 Transport protocols bind to the Host Identity rather than directly to IP addresses. When a host moves and acquires a new address, it updates its peer through HIP signaling without invalidating transport state. This approach makes the separation of identity and location explicit and architectural, rather than incidental.
 
 However, HIP requires deployment of new protocol machinery at both endpoints and introduces compatibility challenges with existing middleboxes, including cryptographic identifiers and modified stack behavior. As with many clean-slate refinements to Internet architecture, its adoption has remained limited. \hfill \break
 
-While HIP introduces a new identity namespace below the transport layer, other efforts sought to extend transport protocols themselves without redefining the IP architecture.
+At the transport layer, other approaches avoid introducing a new namespace and instead extend existing protocols.
 
 ### Transport-Level Multihoming: SCTP
 
@@ -30,13 +28,13 @@ The Stream Control Transmission Protocol (SCTP) represents a transport-layer att
 
 An SCTP endpoint can advertise multiple addresses during association setup, and the peer may use alternate paths if the primary path fails. This supports failover while maintaining a single transport association. Extensions later enabled concurrent multipath transfer.
 
-From an architectural standpoint, SCTP weakens the strict one-to-one relationship between transport connection and IP address pair. An association is no longer uniquely identified by a single four-tuple but may span multiple address pairs. However, identity remains tied to the set of IP addresses themselves; SCTP extends the binding rather than replacing it.
+From an architectural standpoint, SCTP weakens the strict one-to-one relationship between transport connection and IP address pair. An association is no longer uniquely identified by a single four-tuple but may span multiple address pairs. However, identity remains tied to the set of IP addresses themselves. SCTP extends the binding rather than replacing it.
 
 Despite its technical strengths, SCTP has seen limited deployment on the public Internet, in part due to middlebox interference and lack of native browser support. \hfill \break
 
-Whereas SCTP defined a new transport protocol with built-in multihoming support, Multipath TCP extended TCP itself while preserving wire compatibility.
+A closely related approach extends TCP itself while preserving wire compatibility.
 
-### Concurrent Paths: Multipath TCP
+### Multipath TCP
 
 Multipath TCP (MPTCP) extends TCP itself to allow multiple subflows under a single logical connection. Rather than defining a new transport protocol, MPTCP augments TCP with additional options and connection management mechanisms. As described by Barré et al., MPTCP enables hosts to “use several paths possibly through multiple interfaces, to carry the packets that belong to a single connection” [@10.1007/978-3-642-20757-0_35].
 
@@ -46,7 +44,7 @@ MPTCP directly addresses multihoming and path diversity, but it retains TCP's re
 
 Importantly, MPTCP must employ coupled congestion control to remain fair to regular TCP flows. Without coupling, multiple subflows would unfairly aggregate bandwidth at shared bottlenecks [@10.1007/978-3-642-20757-0_35]. Thus, architectural flexibility introduces new control challenges.
 
-### Application-Layer Multiplexing: SPDY and Structured Streams
+### Application-Layer
 
 Not all responses sought to modify the network or transport layer. Some addressed related limitations at the application layer instead.
 
@@ -54,17 +52,17 @@ SPDY, for example, multiplexes multiple application-layer streams over a single 
 
 Structured Stream Transport (SST) similarly observes that neither traditional streams nor datagrams adequately support mixed transactional workloads. Ford argues that applications like HTTP face “awkward tradeoffs” between using multiple TCP streams and serializing transactions on persistent connections [@10.1145/1282427.1282421]. SST introduces hierarchical streams that share congestion control context while allowing independent ordering and flow control.
 
-Both SPDY and SST recognize limitations in the classic stream abstraction. However, they operate above IP and do not redefine how transport state is bound to network-layer identifiers. They refine multiplexing and application structure but do not address mobility at the identity layer.
+Both SPDY and SST recognize limitations in the classic stream abstraction. However, they operate above IP and do not redefine how transport state is bound to network-layer identifiers. These approaches improve performance and application structure but do not fundamentally change how transport sessions are identified in the network.
 
 ### Synthesis
 
 Across these efforts, a pattern emerges:
 
-- Preserve IP identity (Mobile IP)
-- Separate identity from IP (HIP)
-- Extend transport binding (SCTP, MPTCP)
-- Work around transport (SPDY/SST)
+- Preserve IP-based identity through indirection, as in Mobile IP
+- Introduce a separate identity namespace, as in HIP
+- Extend transport protocols to support multiple addresses, as in SCTP and MPTCP
+- Work around transport limitations at the application layer, as in SPDY and SST
 
 These approaches differ not only in mechanism but in the architectural layer at which they intervene. Each approach relaxes or compensates for the tight coupling between session identity and network location in a different way. None achieved broad, general-purpose deployment across the public Internet. The persistence of the classical four-tuple model reflects not only technical inertia but also the constraints imposed by middleboxes, incremental deployability, and compatibility requirements.
 
-It is in this context that QUIC emerges: not as the first attempt to decouple identity from location, but as a transport protocol designed from the outset to make that separation explicit while remaining deployable over UDP in today's Internet.
+These limitations and trade-offs provide the context in which QUIC was developed. Rather than being the first attempt to decouple identity from location, QUIC is a transport protocol designed from the outset to make that separation explicit while remaining incrementally deployable over UDP in the Internet of today.
