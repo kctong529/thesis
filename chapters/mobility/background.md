@@ -16,7 +16,7 @@ However, this decision has an important consequence: since routers do not track 
 
 The decision to maintain communication state exclusively at the endpoints implies that this state must be identified using information available in arriving packets. In the classical Internet design, this identification is based on the combination of source and destination IP addresses together with their port numbers. TCP connection state, for example, is stored in tables keyed by this four-tuple.
 
-This mechanism is not explicitly defined as a design principle in early architectural documents, but emerges naturally from implementation constraints. The only stable information available to both communicating hosts and routers is the network-layer addressing and transport-layer port numbers. Using these values to identify sessions is straightforward and efficient. No additional namespace or identifier needs to be introduced.
+This mechanism is not explicitly defined as a design principle in early architectural documents, but emerges naturally from implementation constraints. The only stable information available to both communicating hosts and routers is the network-layer addressing and transport-layer port numbers. Using these values to identify sessions is operationally straightforward and efficient. No additional namespace or identifier needs to be introduced.
 
 Under stable addressing conditions, the approach works well. As long as this combination remains constant, packets can be reliably associated with the correct session state. The addressing information thus serves two roles simultaneously: it directs packets through the network and identifies the communicating endpoints.
 
@@ -36,7 +36,7 @@ In such environments, a host may continue executing applications while its exter
 
 When the address component of the tuple changes, the transport layer cannot match incoming packets to the existing state entry. The new packets appear to originate from an unknown endpoint. The previous connection state becomes unreachable, and the session is terminated.
 
-The failure is therefore not due to loss of transport state. It arises because the identifier used to index that state is no longer valid. Mobility exposes a structural property of the classical design: identity is defined indirectly through location.
+The resulting failure does not arise from loss of transport state. It arises because the identifier used to index that state is no longer valid. Mobility exposes a structural property of the classical design: identity is defined indirectly through location.
 
 Mobility therefore highlights how changes in location over time can disrupt session continuity. A related but distinct challenge arises when multiple addresses are available simultaneously.
 

@@ -10,7 +10,7 @@ This approach maintains compatibility with unmodified transport protocols, inclu
 
 Mobile IP therefore preserves the architectural assumption that IP addresses represent host identity, while compensating for mobility through redirection. It does not alter the fundamental coupling between transport state and the IP-layer identifier. \hfill \break
 
-Rather than preserving the IP address as the sole identifier through indirection, other proposals questioned whether IP addresses should serve as identifiers at all.
+Other proposals instead questioned whether IP addresses should serve as identifiers at all.
 
 ### A New Namespace: Host Identity Protocol
 
@@ -20,7 +20,7 @@ Transport protocols bind to the Host Identity rather than directly to IP address
 
 However, HIP requires deployment of new protocol machinery at both endpoints and introduces compatibility challenges with existing middleboxes, including cryptographic identifiers and modified stack behavior. As with many clean-slate refinements to Internet architecture, its adoption has remained limited. \hfill \break
 
-At the transport layer, other approaches avoid introducing a new namespace and instead extend existing protocols.
+At the transport layer, other proposals retained the existing namespace and extended transport protocols instead.
 
 ### Transport-Level Multihoming: SCTP
 
@@ -32,7 +32,7 @@ From an architectural standpoint, SCTP weakens the strict one-to-one relationshi
 
 Despite its technical strengths, SCTP has seen limited deployment on the public Internet, in part due to middlebox interference and lack of native browser support. \hfill \break
 
-A closely related approach extends TCP itself while preserving wire compatibility.
+A closely related line of work extended TCP itself while preserving wire compatibility.
 
 ### Multipath TCP
 
@@ -48,7 +48,7 @@ Importantly, MPTCP must employ coupled congestion control to remain fair to regu
 
 Not all responses sought to modify the network or transport layer. Some addressed related limitations at the application layer instead.
 
-SPDY, for example, multiplexes multiple application-layer streams over a single TCP connection. As Wang et al. note, most of SPDY's performance benefits stem from using “a single TCP connection” to avoid repeated connection setup and reduce idle time [@179787]. By consolidating transfers into one connection, SPDY mitigates application-level head-of-line blocking across multiple TCP connections, but it inherits TCP's single-path semantics. Under high loss, a single connection may degrade performance relative to multiple parallel connections [@179787].
+SPDY, for example, multiplexes multiple application-layer streams over a single TCP connection. As the authors of SPDY note, most of its performance benefits stem from using "a single TCP connection" to avoid repeated connection setup and reduce idle time [@179787]. By consolidating transfers into one connection, SPDY mitigates application-level head-of-line blocking across multiple TCP connections, but it inherits TCP's single-path semantics. Under high loss, a single connection may degrade performance relative to multiple parallel connections [@179787].
 
 Structured Stream Transport (SST) similarly observes that neither traditional streams nor datagrams adequately support mixed transactional workloads. Ford argues that applications like HTTP face “awkward tradeoffs” between using multiple TCP streams and serializing transactions on persistent connections [@10.1145/1282427.1282421]. SST introduces hierarchical streams that share congestion control context while allowing independent ordering and flow control.
 

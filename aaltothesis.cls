@@ -432,7 +432,7 @@ protrusion=false]{microtype}%
 %
     \renewcommand{\coverdegprogramname}{%
 	  \iftoggle{BSc}{%
- 		Bachelor's Programme in \d@gpr@g%
+ 		\d@gpr@g%
 	  }{%
 	  \iftoggle{MSc}{%
 		Master's Programme in \d@gpr@g%
