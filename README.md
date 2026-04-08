@@ -100,7 +100,7 @@ Current status: **Planning / Literature review**
 | 13 Feb | First draft (33%) due (23:59) |
 | 13 Mar | Second draft (66%) due (23:59) |
 | 10 Apr | Third draft due (23:59) |
-| 13 Apr – 24 Apr | Final presentations |
+| 21 Apr | Final presentation |
 | 24 Apr | Final thesis due (23:59) |
 
 ## Work Plan Overview
