@@ -1,6 +1,5 @@
-## Migration as a Transport Function
 
-In QUIC, connection migration refers to continuation of an existing connection over a new network path. In the classical Transmission Control Protocol (TCP) model, a change in the address pair generally causes transport failure, since connection identity is derived directly from source and destination addresses together with port numbers. QUIC departs from that model by allowing connection state to remain associated with an explicit connection identifier rather than solely with the current address pair [@rfc9000].
+In QUIC, connection migration refers to continuation of an existing connection over a new network path. In the classic TCP model, a change in the address pair generally causes transport failure, since connection identity is derived directly from source and destination addresses together with port numbers. QUIC departs from that model by allowing connection state to remain associated with an explicit connection identifier rather than solely with the current address pair [@rfc9000].
 
 This design changes the transport response to address change. A new source or destination address does not by itself define a new connection. Instead, QUIC treats address change as an event that requires path assessment and protocol action [@rfc9000]. Hence, migration is not an optional add-on to QUIC, but part of its transport architecture.
 
