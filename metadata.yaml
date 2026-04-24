@@ -2,12 +2,30 @@ title: "Connection Migration and Multipath Communication in QUIC"
 author: "Ki Chun Tong"
 advisor: "Pasi Sarolahti"
 supervisor: "Salu Ylirisku"
-date: "2026-03-17"
+date: "2026-04-24"
 degree: "BSc"
 school: "School of Electrical Engineering"
-program: "Aalto Bachelor's Programme in Science and Technology (Tech.)"
-major: "Digital Systems and Design"
-
+program: "Aalto Bachelor's Programme in Science and Technology"
+major: "Digital Systems and Design (ELEC3056)"
+keywords: "QUIC,connection-migration,mobility,multihoming,identity-location-separation,TCP"
 
 abstract: |
-  Still empty.
+  Traditional transport protocols associate connection state with IP addresses and port numbers.
+  This design works under stable addressing conditions,
+  but it becomes fragile when hosts move between networks, use multiple interfaces,
+  or experience changes caused by middleboxes such as network address translation devices.
+  In these situations, the network location of an endpoint may change even though the communicating application and transport state remain active.
+  This thesis analyzes how QUIC connection migration mitigates this identity-location problem at the transport layer.
+  The thesis first reviews the architectural background of mobility and multihoming,
+  including earlier approaches such as Mobile IP, the Host Identity Protocol, SCTP, Multipath TCP, and application-layer workarounds.
+  It then analyzes the QUIC mechanisms that support connection continuity,
+  especially connection identifiers, path validation, congestion-control behavior after path change,
+  and deployment constraints related to NATs and load balancers.
+  The literature-based analysis is complemented by a small-scale exploratory evaluation using an existing QUIC implementation in a controlled test environment.
+  The evaluation compares QUIC connection migration with a TCP best-case baseline under client address change.
+  The results show that QUIC can preserve an existing connection across address changes when migration succeeds,
+  whereas TCP requires the connection to be re-established because its connection identity remains tied to the address pair.
+  However, QUIC migration still depends on path validation, implementation behavior, endpoint policy, and network conditions.
+  The thesis concludes that QUIC provides a practical transport-layer mitigation of the identity-location problem,
+  but does not fully solve mobility and multihoming as general architectural problems.
+
