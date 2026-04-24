@@ -22,7 +22,6 @@
   pages = {361--372},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  issn = {0146-4833},
   doi = {10.1145/1282427.1282421},
   abstract = {Internet applications currently have a choice between stream and datagram transport abstractions. Datagrams efficiently support small transactions and streams are suited for long-running conversations, but neither abstraction adequately supports applications like HTTP that exhibit a mixture of transaction sizes, or applications like FTP and SIP that use multiple transport instances. Structured Stream Transport (SST) enhances the traditional stream abstraction with a hierarchical hereditary structure, allowing applications to create lightweight child streams from any existing stream. Unlike TCP streams, these lightweight streams incur neither 3-way handshaking delays on startup nor TIME-WAIT periods on close. Each stream offers independent data transfer and flow control, allowing different transactions to proceed in parallel without head-of-line blocking, but all streams share one congestion control context. SST supports both reliable and best-effort delivery in a way that semantically unifies datagrams with streams and solves the classic "large datagram" problem, where a datagram's loss probability increases exponentially with fragment count. Finally, an application can prioritize its streams relative to each other and adjust priorities dynamically through out-of-band signaling. A user-space prototype shows that SST is TCP-friendly to within 2\%, and performs comparably to a user-space TCP and to within 10\% of kernel TCP on a WiFi network.},
   issue_date = {October 2007},
@@ -54,7 +53,6 @@
   pages = {106--114},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  issn = {0146-4833},
   doi = {10.1145/52325.52336},
   abstract = {The Internet protocol suite, TCP/IP, was first proposed fifteen years ago. It was developed by the Defense Advanced Research Projects Agency (DARPA), and has been used widely in military and commercial systems. While there have been papers and specifications that describe how the protocols work, it is sometimes difficult to deduce from these why the protocol is as it is. For example, the Internet protocol is based on a connectionless or datagram mode of service. The motivation for this has been greatly misunderstood. This paper attempts to capture some of the early reasoning which shaped the Internet protocols.},
   issue_date = {August 1988}
@@ -101,6 +99,12 @@
   author = {{CDNetworks Inc.}},
   year = 2026,
   month = jan
+}
+
+@misc{f5_quic_http3,
+  title = {What Are {{QUIC}} and {{HTTP}}/3?},
+  author = {{F5}},
+  year = 2026
 }
 
 @book{kurose2025,
@@ -193,11 +197,17 @@
 
 @article{saltzer1984end,
   title = {End-to-End Arguments in System Design},
-  author = {Saltzer, Jerome H and Reed, David P and Clark, David D},
+  author = {Saltzer, J. H. and Reed, D. P. and Clark, D. D.},
   year = 1984,
-  journal = {ACM Transactions on Computer Systems (TOCS)},
+  month = nov,
+  journal = {ACM Trans. Comput. Syst.},
   volume = {2},
   number = {4},
   pages = {277--288},
-  publisher = {Acm New York, NY, USA}
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  issn = {0734-2071},
+  doi = {10.1145/357401.357402},
+  issue_date = {Nov. 1984},
+  keywords = {data communication,design principles,protocol design}
 }

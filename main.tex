@@ -23,6 +23,11 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% Pandoc image bounding helper
+\providecommand{\pandocbounded}[1]{%
+  \makebox[\linewidth][c]{#1}%
+}
+
 % Fix fancyhdr headheight warning (aaltothesis uses fancyhdr internally)
 \setlength{\headheight}{36pt}
 \addtolength{\topmargin}{-24pt}
