@@ -68,13 +68,15 @@ def extract_metadata(metadata_file, output_tex, output_xmpdata, output_abstract_
     license_text = latex_escape(str(data.get("license", "CC BY-NC-SA 4.0")))
 
     keywords_raw = str(data.get("keywords", "") or "").strip()
+
     if keywords_raw:
-        keywords_latex = latex_escape(r"\spc ".join(keywords_raw.split()))
-        keywords_xmp = keywords_raw
+        keywords_list = [kw.strip() for kw in keywords_raw.split(",") if kw.strip()]
+        keywords_latex = r"\spc ".join(latex_escape(kw) for kw in keywords_list)
+        keywords_xmp = ", ".join(keywords_list)
     else:
         keywords_latex = "thesis"
         keywords_xmp = "thesis"
-
+        
     abstract_raw = str(data.get("abstract", "") or "").strip()
     abstract_one_para = " ".join(abstract_raw.split())
     abstract_tex = latex_escape(abstract_one_para)
