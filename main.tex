@@ -59,14 +59,43 @@
 %% Cover page
 \makecoverpage
 
+%% Preface
+\clearpage
+\thispagestyle{empty}
+\section*{Preface}
+
+I was not always the person that some people now see as a role model, a responsible student, or a good brother. My earlier years were, in many ways, the opposite. I spent too much time being lazy, unproductive, and full of excuses, living without a clear purpose and often avoiding the responsibility I should have taken. Looking back, I know that I wasted years I cannot get back, and I also know that the people who cared about me were affected by the choices I made during that period.
+
+For that reason, this thesis means more to me than the completion of a degree. It marks the end of my bachelor’s education at Aalto University, but it also represents a personal turning point: an attempt to build a more meaningful life, to take responsibility for my choices, and to become more worthy of the people who never gave up on me.
+
+Reaching this point has not been easy, and I would first like to thank my mother for making it possible. Even during my most difficult times, she has supported me unconditionally, both emotionally and financially. I know that returning to university in my thirties is not always seen as a usual path in East Asian culture, but she still supported my decision to pursue what I wanted to do. Even though it meant that she would only see me for a small part of the year, she never made me feel guilty for choosing this path. Without her, I would not have been able to come this far.
+
+I also cannot thank my future wife, Hiu Yan, enough. As a registered nurse, she faces responsibilities far heavier than mine, often working under great pressure in situations where people’s lives are at stake. Despite her own demanding work, she has continued to support me with patience, understanding, and care. My decision to study overseas without a full-time job brought uncertainty to our future, especially at a stage in life where I was expected to have already established my career. Yet she still stood by me and supported the path I chose. I am deeply grateful for her trust, patience, and everything she has done for me.
+
+I would also like to thank Professor Pasi Sarolahti for his supervision and for the fast, detailed feedback he provided on both my thesis and final project. His prompt responses were extremely helpful, especially during the final stages of the work. I know that my own procrastination did not always do justice to the time and effort he put into guiding me, and I am sincerely grateful for his patience, clarity, and support.
+
+Finally, I would like to thank the DSD community for making my years at Aalto meaningful. It has been more than a study programme to me: a place of student events, shared studies, long conversations, hanging out, and occasional ranting about life together. Most importantly, it has been a place where I found friendships that I will carry with me for life.
+
+\vspace{2cm}
+Otaniemi, 21 May 2026\\
+
+\vspace{5mm}
+{\hfill Ki Chun Tong \hspace{1cm}}
+
 \clearpage
 
-%% Abstract page (with language specification)
+%% Abstract page
+\clearpage
+\begingroup
+\let\oldaddcontentsline\addcontentsline
+\renewcommand{\addcontentsline}[3]{}
 \begin{abstractpage}[english]
 \input{build/abstract.tex}
 \end{abstractpage}
+\endgroup
 
 %% Table of contents
+\clearpage
 \tableofcontents
 
 %% =========================================================================
