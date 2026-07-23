@@ -7,25 +7,21 @@ Transport protocols provide mechanisms such as reliability, congestion control, 
 
 In Internet applications, this role is often performed by the hypertext transfer protocol (HTTP). HTTP defines a request-response model in which a client sends a request and a server returns a response with status information, metadata, and, when appropriate, a representation of the requested resource [@rfc9110]. HTTP provides the semantic structure for many application-layer exchanges, while the transport protocol carries the data between endpoints [@kurose2025].
 
-Early versions of HTTP were developed for a web environment with relatively simple pages and a limited number of associated resources. As web applications became more interactive and media-rich, the number of concurrent resource transfers increased. Modern web pages often require scripts, style sheets, images, fonts, and asynchronous application data. This communication pattern placed increasing pressure on the transport layer [@kurose2025].
+Early versions of HTTP were developed for a web environment with relatively simple pages and a limited number of associated resources. As web applications became more interactive and media-rich, the number of concurrent resource transfers increased. Modern web pages may require scripts, style sheets, images, fonts, and asynchronous application data to be transferred during the same page load. These concurrent transfers increased the demands placed on the underlying transport protocol [@kurose2025].
 
-HTTP/1.1 improved performance through persistent connections, but browsers still commonly opened multiple parallel TCP connections to the same origin. HTTP/2 introduced multiplexing over a single TCP connection, but it still inherited the ordered byte-stream semantics of TCP. Therefore, packet loss at the TCP layer could delay otherwise independent application data. QUIC was developed in response to these transport limitations, and HTTP/3 was later defined as HTTP over QUIC [@kurose2025; @rfc9000].
+The increasing number of concurrent web transfers exposed limitations in how HTTP used TCP. HTTP/1.1 often relied on several parallel TCP connections, while HTTP/2 concentrated multiple application streams into one connection. In HTTP/2, all streams still share the same underlying TCP byte stream. If TCP has to wait for a missing segment, delivery of data for other streams can also be delayed. These limitations were among the reasons for developing QUIC. HTTP/3 subsequently adopted QUIC as its transport protocol [@kurose2025; @rfc9000].
 
-For the purposes of this thesis, HTTP/3 is mainly relevant as a deployment driver for QUIC. The rest of the thesis does not analyze HTTP semantics. Instead, it focuses on QUIC as a transport protocol that separates connection identity from the current address pair.
+HTTP/3 is mainly relevant to this thesis as a deployment driver for QUIC. The following sections do not examine HTTP semantics in detail. The focus is instead on the QUIC transport mechanisms that separate connection identity from the current address pair.
 
 ## QUIC as a UDP-based Secure Transport
 
-QUIC differs from TCP not only in its protocol mechanisms, but also in its deployment model. It runs above UDP while providing many functions normally associated with TCP. This placement gives QUIC a different deployment path from TCP while preserving reliable and secure transport semantics.
+QUIC is a general-purpose transport protocol standardized by the Internet Engineering Task Force (IETF) in RFC 9000 [@rfc9000]. Unlike TCP, QUIC operates over the user datagram protocol (UDP). UDP is connectionless and transfers data as individual messages called datagrams [@kurose2025]. Each datagram is handled independently, without an established transport connection between the endpoints. UDP does not maintain connection state or provide reliability, loss recovery, congestion control, flow control, or a stream abstraction [@kurose2025]. UDP can also be used with IP broadcast and multicast since no separate transport connection has to be established with each receiver.
 
-QUIC is a general-purpose transport protocol standardized by the Internet Engineering Task Force (IETF) in RFC 9000 [@rfc9000]. One major difference between QUIC and TCP is that QUIC operates over the user datagram protocol (UDP). UDP is a minimal transport protocol that provides port-based delivery between applications, but it does not by itself provide connection establishment, reliability, retransmission, congestion control, stream abstraction, or ordered delivery. In the traditional Internet stack, these functions are typically associated with TCP rather than UDP [@kurose2025].
+QUIC builds a connection abstraction on top of these independent UDP datagrams. It uses UDP as a substrate, while the more complex transport functions are implemented within the QUIC protocol itself. Unlike TCP, whose implementation is traditionally part of the operating system kernel [@kurose2025], QUIC implementations can provide these functions in user space as part of the software used by an application. This avoids the need to add new QUIC-specific transport behavior directly to the operating system kernel. QUIC support can instead be distributed with application software, so deployment and protocol evolution depend less on operating system updates.
 
-The use of UDP allows QUIC to implement transport functionality in user space rather than in operating system kernels. User-space deployment avoids the need to introduce new transport behavior directly into kernel TCP implementations and allows protocol evolution to proceed more rapidly [@rfc9000]. QUIC uses UDP as a substrate, while the more complex transport functions are implemented within the QUIC protocol itself.
+The QUIC endpoints maintain the state needed to associate successive datagrams with the same connection. QUIC also provides acknowledgments, loss recovery, congestion control, flow control, packet numbering, and multiple streams, with ordered delivery within each stream [@rfc9000; @rfc9002]. From the perspective of UDP, these packets remain individual datagrams; their association with an ongoing connection is maintained by QUIC.
 
-The use of UDP does not imply that QUIC provides only an unreliable datagram service. QUIC implements reliability, acknowledgments, retransmission behavior, congestion control, flow control, packet numbering, and ordered delivery within the protocol itself [@rfc9000; @rfc9002]. QUIC retains many transport functions traditionally associated with TCP, but it changes the context in which those functions are implemented and deployed.
-
-Security is also part of the QUIC transport design. QUIC incorporates TLS 1.3 into connection establishment instead of placing encryption in a separate layer above transport [@rfc9000]. During the handshake, the endpoints establish cryptographic keys and negotiate transport parameters. After the handshake, most QUIC packet contents are protected, while the packet header still carries the information needed for routing and connection identification. This integration means that QUIC connection state includes both transport state and cryptographic state.
-
-A simplified view of the protocol stack is shown in Figure \ref{fig:quic-stack}.
+QUIC integrates the TLS 1.3 handshake into connection establishment [@rfc9000]. During the handshake, the endpoints establish cryptographic keys and negotiate transport parameters. Most QUIC packet contents are protected after the handshake, while selected header fields remain visible for packet processing and connection identification. The connection includes both transport state and the cryptographic context established during the handshake. Figure \ref{fig:quic-stack} shows the resulting position of QUIC in the protocol stack.
 
 \begin{center}
 \includegraphics[width=0.3\linewidth,keepaspectratio]{stack.png}
@@ -33,15 +29,13 @@ A simplified view of the protocol stack is shown in Figure \ref{fig:quic-stack}.
 \label{fig:quic-stack}
 \end{center}
 
-This stack position is important for the thesis. QUIC remains compatible with the deployed Internet through UDP, but it defines its own connection state and connection identifiers above UDP. This design creates the basis for connection continuity across path changes.
+UDP still uses source and destination addresses and ports to deliver QUIC datagrams. QUIC maintains its connection state above this address pair and defines explicit connection identifiers that can refer to that state. An address pair can therefore describe the path currently used for packet delivery without serving as the sole identifier of the QUIC connection.
 
 ## QUIC Packets and Connection Identifiers
 
 This subsection introduces the QUIC packet fields most relevant to connection continuity. Section 4 discusses the full migration behavior in more detail. Here, the purpose is to explain how QUIC packets can carry explicit connection identifiers rather than depending only on the address pair.
 
-QUIC packets carry information that allows endpoints to associate packets with a connection. The most important field for this thesis is the connection identifier. A QUIC packet may carry a destination connection identifier and a source connection identifier [@rfc9000]. These identifiers allow an endpoint to associate an arriving packet with existing connection state without relying only on the source and destination IP addresses and port numbers.
-
-A simplified QUIC packet structure is shown in Figure \ref{fig:quic-packet}.
+QUIC packets carry information that allows endpoints to associate packets with a connection. The most important field for this thesis is the connection identifier. A QUIC packet may carry a destination connection identifier and a source connection identifier [@rfc9000]. These identifiers allow an endpoint to associate an arriving packet with existing connection state without relying only on the source and destination IP addresses and port numbers. Figure \ref{fig:quic-packet} shows a simplified QUIC packet structure.
 
 \begin{center}
 \includegraphics[width=\linewidth,keepaspectratio]{packet.png}
@@ -49,11 +43,11 @@ A simplified QUIC packet structure is shown in Figure \ref{fig:quic-packet}.
 \label{fig:quic-packet}
 \end{center}
 
-The destination connection identifier identifies the connection state at the receiving endpoint. The source connection identifier provides an identifier that the peer can use in the opposite direction. QUIC can also issue new connection identifiers during a connection. This allows an endpoint to change the identifier used on future packets, for example for routing or privacy reasons [@rfc9000].
+The destination connection identifier allows the receiving endpoint to identify the relevant connection state. The source connection identifier provides an identifier that the peer can use in the opposite direction. QUIC can also issue new connection identifiers during a connection. This allows an endpoint to change the identifier used on future packets, for example for routing or privacy reasons [@rfc9000].
 
-The connection identifier is the key difference from the classical TCP model. In TCP, the four-tuple of source address, source port, destination address, and destination port identifies the connection. In QUIC, the address pair still matters for packet delivery, but it is not the only basis for connection identification. This separation allows QUIC to maintain connection state even when the network path changes.
+TCP and QUIC differ in how this connection state is identified. A TCP connection is identified through the four-tuple of source address, source port, destination address, and destination port. QUIC still relies on addresses and ports for packet delivery, but its connection identifier provides another means to associate a packet with an existing connection. A change in the network path does not by itself change the identity of the QUIC connection.
 
-The distinction between connection and path is central to later migration behavior. A QUIC connection refers to the transport state shared by the endpoints. A path refers to the address pair and route currently used to carry packets. Section 4 explains how QUIC validates a new path and decides whether the connection can continue over that path.
+A QUIC connection and the path currently carrying its packets can change independently. The connection represents transport and cryptographic state shared by the endpoints, while a path is determined by the address pair and route used for packet delivery. When the address pair changes, QUIC can first associate packets with the existing connection and then determine whether the new path is suitable for continued communication. The validation of such a path is discussed in Section 4.
 
 ## Streams and Multiplexing
 
